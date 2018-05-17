@@ -16,7 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PracticeActivity"></activity>
+        <activity android:name=".PracticeActivity" />
+        <activity
+            android:name=".LoadActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+
+        </activity>
+        <activity android:name=".LoadCreate"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+
+        </activity>
     </application>
 
 </manifest>

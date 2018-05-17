@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Smart Cards</string>
+    <string name="button_create">Create</string>
+    <string name="button_load">Load List</string>
+    <string name="button_browse">path...</string>
+    <string name="textView_path">file path</string>
+    <string name="button_brows">Browse</string>
+    <string name="button_load2">Load</string>
 </resources>
