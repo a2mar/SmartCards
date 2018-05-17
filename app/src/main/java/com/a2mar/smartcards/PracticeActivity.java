@@ -11,15 +11,17 @@ import java.util.ArrayList;
 
 public class PracticeActivity extends AppCompatActivity {
 
+    private static ArrayList<VocCard> vocCardList = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_practice);
 
         // Get the Intent that started this activity and extract the string
-
-        final ArrayList<VocCard> vocCardList = getIntent().getParcelableArrayListExtra("voc1");
-
+        if(vocCardList ==null) {
+            vocCardList = getIntent().getParcelableArrayListExtra("voc1");
+        }
         //Get the Data from the VocCards
         final VocCard card4count = vocCardList.get(0);
         int count = card4count.getCount();
@@ -47,7 +49,7 @@ public class PracticeActivity extends AppCompatActivity {
             @SuppressWarnings("unchecked")
             public void onClick(View v) {
                 Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-                intent.putParcelableArrayListExtra("voc1",(ArrayList)vocCardList);
+                //intent.putParcelableArrayListExtra("voc1",(ArrayList)vocCardList);
                 getApplicationContext().startActivity(intent);
             }
         }); /**/
