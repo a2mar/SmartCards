@@ -1,6 +1,8 @@
 package com.a2mar.smartcards;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -70,7 +72,7 @@ public class LoadCreate extends AppCompatActivity {
         deleteFromList(parent);
         //First remove the VocCardList from mListCollection, and then remove the view
         innerParentLayout.removeView((View)v.getParent());
-
+            //TODO replace (View)v.getParent() with parent
 
     }
 
@@ -78,6 +80,17 @@ public class LoadCreate extends AppCompatActivity {
     * the method needs to determine the index of mListCOllectioin element which corresponds to the element-view-construct
     * */
     public void deleteFromList(View parent){
+        int index = extractIndex(parent);
+
+        mListCollection.add(index+1, null);     //this null element takes the place of the deleted one, to preserve the indices
+        mListCollection.increaseIndex();
+        mListCollection.remove(index);
+        mListCollection.decreaseIndex();
+    }
+    /*This method resolves the relation between a View and its specified VocCardList which is inside the mListCollection
+    * TODO find out if there is another way to make a reference to an instance within a View or a Layout via xml-Code
+    */
+    public int extractIndex(View parent){
         TextView infoView = parent.findViewById(R.id.Infos);
         CharSequence infoCharText = infoView.getText();
         String infoText = infoCharText.toString();
@@ -85,11 +98,14 @@ public class LoadCreate extends AppCompatActivity {
         int position = infoText.indexOf(match);
         String indexStr = infoText.substring(position+2);
         int index = Integer.valueOf(indexStr) -1;       // -1, because static int index starts at 1
-
-        mListCollection.add(index+1, null);     //this null element takes the place of the deleted one, to preserve the indices
-        mListCollection.increaseIndex();
-        mListCollection.remove(index);
-        mListCollection.decreaseIndex();
+        return index;
     }
 
+    public void startTraining(View view) {
+        Intent intent = new Intent(LoadCreate.this, PracticeActivity.class);
+        View parent = (View) view.getParent();
+        int index = extractIndex(parent);
+        intent.putParcelableArrayListExtra("VocList", (ArrayList<? extends Parcelable>) mListCollection.get(index));
+        startActivity(intent);
+    }
 }

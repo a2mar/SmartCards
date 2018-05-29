@@ -20,7 +20,7 @@ public class PracticeActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         if(vocCardList ==null) {
-            vocCardList = getIntent().getParcelableArrayListExtra("voc1");
+            vocCardList = getIntent().getParcelableArrayListExtra("VocList");
         }
         //Get the Data from the VocCards
         final VocCard card4count = vocCardList.get(0);
@@ -39,11 +39,13 @@ public class PracticeActivity extends AppCompatActivity {
         String test = card.getVocForeign();
 
         //Make a TextView display the transfered String
-        TextView textView = findViewById(R.id.textView);
+        TextView textView = findViewById(R.id.word_foreign);
         textView.setText(test);
 
+        testVocCard();
+
         //Create another intent that recalls same activity recursively
-        Button nextBtn = (Button) findViewById(R.id.button2);
+        Button nextBtn = (Button) findViewById(R.id.button1);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             @SuppressWarnings("unchecked")
@@ -54,5 +56,14 @@ public class PracticeActivity extends AppCompatActivity {
             }
         }); /**/
 
+    }
+
+    private void testVocCard() {
+
+    }
+
+
+
+    public void flipCurrentCard(View view) {
     }
 }

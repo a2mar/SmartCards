@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="215dp"
+    android:orientation="vertical"
+    android:background="#ff8c00"
+    android:layout_gravity="center"
+    android:id="@+id/card_front_frame"
+    android:rotation="0"
+    >
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/word_foreign"
+        android:text="Front"
+        android:textStyle="bold"
+        android:textSize="72sp"
+        android:textColor="#fff"
+        style="@style/Base.TextAppearance.AppCompat.Display1"
+        android:gravity="center"/>
+
+</FrameLayout>
