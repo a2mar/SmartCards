@@ -7,23 +7,24 @@
     android:layout_height="match_parent"
     android:id="@+id/practiceLayout"
     tools:context=".PracticeActivity"
-    android:onClick="flipCurrentCard">
+    android:onClick="flipCard"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/container4Cards">
+        android:id="@+id/container_card_back">
 
         <include layout="@layout/card_back"/>
 
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/card_front"
+        android:id="@+id/container_card_front"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/card_front" />
+        <include layout="@layout/card_front"/>
 
     </FrameLayout>
 
@@ -45,6 +46,30 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:text="next" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/correct_button"
+            android:text="correct"
+            android:layout_above="@layout/card_front"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentRight="true"
+            android:onClick="correctContinuePractice"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/wrong_button"
+            android:text="wrong"
+            android:layout_above="@layout/card_front"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:onClick="wrongContinuePractice"
+            />
 
 
 
