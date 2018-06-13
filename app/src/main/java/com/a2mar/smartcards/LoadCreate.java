@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,8 +14,18 @@ import android.widget.Toast;
 
 import com.a2mar.smartcards.vocdata.VocCollection;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LoadCreate extends AppCompatActivity {
 
@@ -24,6 +35,7 @@ public class LoadCreate extends AppCompatActivity {
     private ArrayList<VocCard> mVocCardList;
     private String[][] voc_f = {{"bread1","apple1","water1"},{"bread2","apple2","water2"},{"bread3","apple3","water3"},{"bread4","apple4","water4"}};
     private String[][] voc_n = {{"Brot1","Apfel1","Wasser1"},{"Brot2","Apfel2","Wasser2"},{"Brot3","Apfel3","Wasser3"},{"Brot4","Apfel4","Wasser4"}};
+    private File mPathTry;
     /* private String[] voc_f = {"bread","apple","water"};
     private String[] voc_n = {"Brot","Apfel","Wasser"};*/
 
@@ -34,32 +46,99 @@ public class LoadCreate extends AppCompatActivity {
 
         innerParentLayout = (LinearLayout) findViewById(R.id.inner_parent_layout);
 
-        File mPathTry = getFilesDir();
-        if(new File(mPathTry+"/list_of_collections.xml").exists() == false){
-            Toast mToast = new Toast(this);
-            mToast.makeText(this, "list of collection not yet here", Toast.LENGTH_LONG).show();
-            File copyOfLiOfCo = new File(mPathTry, "list_of_collections.xml");
-           // copyOfLiOfCo = R.raw.list_of_collections;
-
+        mPathTry = getFilesDir();
+        if(!new File(mPathTry+"/list_of_collections.xml").exists()) {
+            //copy res file from raw to local app directory
+            copyResFile(mPathTry);
         }
 
         produceList();
 
     }
 
+    private void copyResFile(File mPathTry) {
+        Toast mToast = new Toast(this);
+        mToast.makeText(this, "list of collection not yet here", Toast.LENGTH_LONG).show();
+
+        InputStream templateFile = getResources().openRawResource(R.raw.list_of_collections);
+
+        File copyOfLiOfCo = new File(mPathTry, "list_of_collections.xml");
+
+        OutputStream outStream = null;
+        try {
+            outStream = new FileOutputStream(copyOfLiOfCo);
+            byte[] buffer = new byte[8 * 1024];
+            int bytesRead;
+            while ((bytesRead = templateFile.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            templateFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            outStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void produceList() {
         //(1)find list of Collections .xml file
+        File listColl = new File(mPathTry+"/list_of_collections.xml");
 
+        //(2)get the names/ pathes of all the current lists and their properties and save them as ArrayList<String> in an ArrayList<List<String>>
+        List<List<String>> mCollFileList = new ArrayList<List<String>>();
 
+        try {
 
+            FileInputStream fis = new FileInputStream(listColl);
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(fis, null);
+            parser.nextTag();
 
-        //(2)get the names/ pathes of all the current lists and their properties and save them as ArrayList<String>
+            extractXML(parser, mCollFileList);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        }
 
         //(3)Inflate Layout innerParentLayout with multiple Versions of element with the ArrayList<String> from (2)
 
         //(4) make implementation of mVocCardList (and mListCollection if necessary) with a OnClick method of each element Layout, by retrieving the List-Title
 
     }
+
+    private void extractXML(XmlPullParser parser, List<List<String>> mCollFileList) {
+        try {
+            parser.require(XmlPullParser.START_TAG, null, "List");
+
+
+
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+
+
 
     //Adding element to Layout
     public void addElement(View view) {
