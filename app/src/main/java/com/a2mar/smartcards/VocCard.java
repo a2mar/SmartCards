@@ -98,5 +98,4 @@ public class VocCard implements Parcelable{
         this.voc_foreign = voc_foreign;
         this.voc_native = voc_native;
     }
-
 }

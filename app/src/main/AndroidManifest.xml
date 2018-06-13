@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.a2mar.smartcards">
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,15 +20,13 @@
         <activity android:name=".PracticeActivity" />
         <activity
             android:name=".LoadActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-
-        </activity>
-        <activity android:name=".LoadCreate"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-
-        </activity>
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".LoadCreate"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".CreateActivity" />
+        <activity android:name=".BrowseActivity" />
+        <activity android:name=".ParseActivity"> </activity>
     </application>
 
 </manifest>

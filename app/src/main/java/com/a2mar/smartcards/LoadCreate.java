@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.a2mar.smartcards.vocdata.VocCollection;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class LoadCreate extends AppCompatActivity {
@@ -31,6 +33,32 @@ public class LoadCreate extends AppCompatActivity {
         setContentView(R.layout.activity_load_create);
 
         innerParentLayout = (LinearLayout) findViewById(R.id.inner_parent_layout);
+
+        File mPathTry = getFilesDir();
+        if(new File(mPathTry+"/list_of_collections.xml").exists() == false){
+            Toast mToast = new Toast(this);
+            mToast.makeText(this, "list of collection not yet here", Toast.LENGTH_LONG).show();
+            File copyOfLiOfCo = new File(mPathTry, "list_of_collections.xml");
+           // copyOfLiOfCo = R.raw.list_of_collections;
+
+        }
+
+        produceList();
+
+    }
+
+    private void produceList() {
+        //(1)find list of Collections .xml file
+
+
+
+
+        //(2)get the names/ pathes of all the current lists and their properties and save them as ArrayList<String>
+
+        //(3)Inflate Layout innerParentLayout with multiple Versions of element with the ArrayList<String> from (2)
+
+        //(4) make implementation of mVocCardList (and mListCollection if necessary) with a OnClick method of each element Layout, by retrieving the List-Title
+
     }
 
     //Adding element to Layout
@@ -41,6 +69,8 @@ public class LoadCreate extends AppCompatActivity {
         final View newView = inflater.inflate(R.layout.element, null);
         TextView infoView = newView.findViewById(R.id.Infos);
         infoView.setText("this is the List No. "+Integer.toString(mListCollection.getIndex()));
+        TextView titleView = newView.findViewById(R.id.list_title);
+        titleView.setText("List "+Integer.toString(mListCollection.getIndex()));
         // Add the new element view construct
         innerParentLayout.addView(newView, innerParentLayout.getChildCount());
     }
@@ -106,6 +136,11 @@ public class LoadCreate extends AppCompatActivity {
         View parent = (View) view.getParent();
         int index = extractIndex(parent);
         intent.putParcelableArrayListExtra("VocList", (ArrayList<? extends Parcelable>) mListCollection.get(index));
+        startActivity(intent);
+    }
+
+    public void startCreation(View view) {
+        Intent intent = new Intent(LoadCreate.this, CreateActivity.class);
         startActivity(intent);
     }
 }

@@ -43,10 +43,24 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:id="@+id/fast_create"
+        android:text="Add"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
         android:onClick="addElement"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:id="@+id/create_list"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:onClick="startCreation"
+        android:layout_toRightOf="@+id/fast_create"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="10dp"
         />
 </RelativeLayout>
