@@ -120,10 +120,59 @@ public class LoadCreate extends AppCompatActivity {
 
     }
 
-    private void extractXML(XmlPullParser parser, List<List<String>> mCollFileList) {
+    private void extractXML( XmlPullParser parser, List<List<String>> mCollFileList) {
         try {
+
+            ArrayList<ArrayList<String>> bigList = new ArrayList<ArrayList<String>>();
+
             parser.require(XmlPullParser.START_TAG, null, "List");
 
+            while(parser.next() != XmlPullParser.END_TAG){
+
+                ArrayList<String> innerList = new ArrayList<>();
+
+                parser.require(XmlPullParser.START_TAG, null, "Typ");
+                String sTyp = "";
+                while(parser.next() != XmlPullParser.END_TAG){
+                    sTyp = sTyp + parser.getText();
+                    parser.nextTag();
+                }
+                innerList.add(sTyp);
+
+                parser.require(XmlPullParser.START_TAG, null, "WordCount");
+                String sWordCount = "";
+                while(parser.next() != XmlPullParser.END_TAG){
+                    sWordCount = sWordCount + parser.getText();
+                    parser.nextTag();
+                }
+                innerList.add(sWordCount);
+
+                parser.require(XmlPullParser.START_TAG, null, "TrainingRounds");
+                String sTrainingRounds = "";
+                while(parser.next() != XmlPullParser.END_TAG){
+                    sTrainingRounds = sTrainingRounds + parser.getText();
+                    parser.nextTag();
+                }
+                innerList.add(sTrainingRounds);
+
+                parser.require(XmlPullParser.START_TAG, null, "ErrorQuota");
+                String sErrorQuota = "";
+                while(parser.next() != XmlPullParser.END_TAG){
+                    sErrorQuota = sErrorQuota + parser.nextTag();
+                    parser.nextTag();
+                }
+                innerList.add(sErrorQuota);
+
+                parser.require(XmlPullParser.START_TAG, null, "PercentLearned");
+                String sPercentLearned = "";
+                while(parser.next() != XmlPullParser.END_TAG){
+                    sPercentLearned = sPercentLearned + parser.getText();
+                    parser.nextTag();
+                }
+                innerList.add(sTyp);
+
+                bigList.add(innerList);
+            }
 
 
         } catch (XmlPullParserException e) {
