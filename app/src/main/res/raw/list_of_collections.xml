@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><ListOfCollections>
-    <List name="﻿Example List">
+    <List name="﻿ExampleList">
         <Type>example</Type>
         <WordCount>0</WordCount>
         <TrainingRounds>0</TrainingRounds>
         <ErrorQuota>0</ErrorQuota>
-        <PercentLearned>example</PercentLearned>
+        <PercentLearned>0</PercentLearned>
     </List>
 </ListOfCollections>

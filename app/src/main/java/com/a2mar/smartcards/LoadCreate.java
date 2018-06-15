@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,11 @@ import android.widget.Toast;
 
 import com.a2mar.smartcards.vocdata.VocCollection;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -26,6 +32,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class LoadCreate extends AppCompatActivity {
 
@@ -52,8 +62,78 @@ public class LoadCreate extends AppCompatActivity {
             copyResFile(mPathTry);
         }
 
-        produceList();
+        //testLog();
 
+        //produceList();
+
+        parseList();
+        
+        displayList();
+
+    }
+
+    private void displayList() {
+    }
+
+    private void testLog() {
+        File testDir = new File(getFilesDir()+"/%EF%BB%BFLebensmittel.xml");
+
+        if(testDir.exists()){
+            Log.println(Log.ASSERT,"yes test","File exists");
+        }
+        else{
+            Log.println(Log.ASSERT,"no Test","File does NOT exists");
+        }
+
+        Log.println(Log.ASSERT,"=","=========================");
+    }
+
+    private void parseList() {
+        try {
+            //Get Document Builder
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            //Build Document
+            //Document document = builder.parse(mPathTry+"/list_of_collections.xml");
+            Document document = builder.parse(new File(mPathTry.getAbsolutePath()+"/list_of_collections.xml"));
+
+            //Normalize the XML Structure; It's just too important !!
+            document.getDocumentElement().normalize();
+
+            //Here comes the root node
+            Element root = document.getDocumentElement();
+            Log.println(Log.ASSERT,"nodename", root.getNodeName());
+
+            //Get all lists
+            NodeList nList = document.getElementsByTagName("List");
+            Log.println(Log.ASSERT,"=","=========================");
+
+            for (int temp = 0; temp < nList.getLength(); temp++)
+            {
+                Node node = nList.item(temp);
+                Log.println(Log.ASSERT,"space","");    //Just a separator
+                if (node.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    //Print each employee's detail
+                    Element eElement = (Element) node;
+                    Log.println(Log.ASSERT,"type","Type : "    + eElement.getAttribute("Type"));
+                    Log.println(Log.ASSERT,"word count","Word Count : "  + eElement.getElementsByTagName("WordCount").item(0).getTextContent());
+                    Log.println(Log.ASSERT,"TRounds","Training Rounds : "   + eElement.getElementsByTagName("TrainingRounds").item(0).getTextContent());
+                    Log.println(Log.ASSERT,"E Quota","Error Quota : "    + eElement.getElementsByTagName("ErrorQuota").item(0).getTextContent());
+                    Log.println(Log.ASSERT,"Percent Learned","Percent Learned : "    + eElement.getElementsByTagName("PercentLearned").item(0).getTextContent());
+                }
+            }
+
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void copyResFile(File mPathTry) {
@@ -123,60 +203,61 @@ public class LoadCreate extends AppCompatActivity {
     private void extractXML( XmlPullParser parser, List<List<String>> mCollFileList) {
         try {
 
-            ArrayList<ArrayList<String>> bigList = new ArrayList<ArrayList<String>>();
+            //ArrayList<ArrayList<String>> bigList = new ArrayList<ArrayList<String>>();
 
             parser.require(XmlPullParser.START_TAG, null, "List");
 
             while(parser.next() != XmlPullParser.END_TAG){
 
-                ArrayList<String> innerList = new ArrayList<>();
-
-                parser.require(XmlPullParser.START_TAG, null, "Typ");
-                String sTyp = "";
-                while(parser.next() != XmlPullParser.END_TAG){
-                    sTyp = sTyp + parser.getText();
-                    parser.nextTag();
-                }
-                innerList.add(sTyp);
-
-                parser.require(XmlPullParser.START_TAG, null, "WordCount");
-                String sWordCount = "";
-                while(parser.next() != XmlPullParser.END_TAG){
-                    sWordCount = sWordCount + parser.getText();
-                    parser.nextTag();
-                }
-                innerList.add(sWordCount);
-
-                parser.require(XmlPullParser.START_TAG, null, "TrainingRounds");
-                String sTrainingRounds = "";
-                while(parser.next() != XmlPullParser.END_TAG){
-                    sTrainingRounds = sTrainingRounds + parser.getText();
-                    parser.nextTag();
-                }
-                innerList.add(sTrainingRounds);
-
-                parser.require(XmlPullParser.START_TAG, null, "ErrorQuota");
-                String sErrorQuota = "";
-                while(parser.next() != XmlPullParser.END_TAG){
-                    sErrorQuota = sErrorQuota + parser.nextTag();
-                    parser.nextTag();
-                }
-                innerList.add(sErrorQuota);
-
-                parser.require(XmlPullParser.START_TAG, null, "PercentLearned");
-                String sPercentLearned = "";
-                while(parser.next() != XmlPullParser.END_TAG){
-                    sPercentLearned = sPercentLearned + parser.getText();
-                    parser.nextTag();
-                }
-                innerList.add(sTyp);
-
-                bigList.add(innerList);
+//                ArrayList<String> innerList = new ArrayList<>();
+//
+//                parser.require(XmlPullParser.START_TAG, null, "Typ");
+//                String sTyp = "";
+//                while(parser.next() != XmlPullParser.END_TAG){
+//                    sTyp = sTyp + parser.getText();
+//                    parser.nextTag();
+//                }
+//                innerList.add(sTyp);
+//
+//                parser.require(XmlPullParser.START_TAG, null, "WordCount");
+//                String sWordCount = "";
+//                while(parser.next() != XmlPullParser.END_TAG){
+//                    sWordCount = sWordCount + parser.getText();
+//                    parser.nextTag();
+//                }
+//                innerList.add(sWordCount);
+//
+//                parser.require(XmlPullParser.START_TAG, null, "TrainingRounds");
+//                String sTrainingRounds = "";
+//                while(parser.next() != XmlPullParser.END_TAG){
+//                    sTrainingRounds = sTrainingRounds + parser.getText();
+//                    parser.nextTag();
+//                }
+//                innerList.add(sTrainingRounds);
+//
+//                parser.require(XmlPullParser.START_TAG, null, "ErrorQuota");
+//                String sErrorQuota = "";
+//                while(parser.next() != XmlPullParser.END_TAG){
+//                    sErrorQuota = sErrorQuota + parser.nextTag();
+//                    parser.nextTag();
+//                }
+//                innerList.add(sErrorQuota);
+//
+//                parser.require(XmlPullParser.START_TAG, null, "PercentLearned");
+//                String sPercentLearned = "";
+//                while(parser.next() != XmlPullParser.END_TAG){
+//                    sPercentLearned = sPercentLearned + parser.getText();
+//                    parser.nextTag();
+//                }
+//                innerList.add(sTyp);
+//
+//                mCollFileList.add(innerList);
             }
 
 
         } catch (XmlPullParserException e) {
             e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

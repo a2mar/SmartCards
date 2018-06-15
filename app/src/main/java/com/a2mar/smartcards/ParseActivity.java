@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.w3c.dom.Attr;
@@ -37,7 +38,12 @@ public class ParseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         passedPath = intent.getStringExtra("path");
 
+        if(!new File(getFilesDir().getAbsolutePath()+"/ExampleList.xml").exists()){
+            writeExampleXML();
+        }
+
         writeXML();
+
 
         showComplete();
 
@@ -50,6 +56,9 @@ public class ParseActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void writeExampleXML() {
     }
 
     private void startTheNewActivity() {
@@ -75,7 +84,25 @@ public class ParseActivity extends AppCompatActivity {
             int indSepTitle = fileTitle.indexOf(separate);
             fileTitle = fileTitle.substring(0,indSepTitle);
 
-            String fileOutputName = fileTitle+".xml";
+            char[] titleChars = fileTitle.toCharArray();
+            int chLength = titleChars.length;
+
+            String cutTitle = "";
+            for(int i=1; i<chLength;i++){
+                cutTitle = cutTitle+titleChars[i];
+            }
+
+
+
+//            Log.println(Log.ASSERT, "ft","codepoint at 0: "+fileTitle.codePointAt(0));
+//            Log.println(Log.ASSERT, "ft","codepoint at 1: "+fileTitle.codePointAt(1));
+//            Log.println(Log.ASSERT, "ft","codepoint at 2: "+fileTitle.codePointAt(2));
+//
+//            Log.println(Log.ASSERT, "ct","codepoint at 0: "+cutTitle.codePointAt(0));
+//            Log.println(Log.ASSERT, "ct","codepoint at 1: "+cutTitle.codePointAt(1));
+//            Log.println(Log.ASSERT, "ct","codepoint at 2: "+cutTitle.codePointAt(2));
+
+            String fileOutputName = cutTitle+".xml";
             File mOutFile = new File(getFilesDir(), fileOutputName);
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -92,7 +119,7 @@ public class ParseActivity extends AppCompatActivity {
 
             //set Attributes to listElement
             Attr attr = doc.createAttribute("name");
-            attr.setValue(fileTitle);
+            attr.setValue(cutTitle);
             listElement.setAttributeNode(attr);
 
             //inside while loop
