@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,10 +74,37 @@ public class LoadCreate extends AppCompatActivity {
     }
 
     private void displayList() {
+
+        File mListCollection = new File(getFilesDir().getAbsolutePath()+"/list_of_collections.xml");
+
+        try {
+            InputStream is = new FileInputStream(mListCollection);
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(false);
+            XmlPullParser parser = factory.newPullParser();
+
+            parser.setInput(is, null);
+
+            //while loop as long as the END_TAG for Collection appears
+
+            int eventType = parser.getEventType();
+
+
+
+
+
+
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void testLog() {
-        File testDir = new File(getFilesDir()+"/%EF%BB%BFLebensmittel.xml");
+        File testDir = new File(getFilesDir()+"/Lebensmittel.xml");
 
         if(testDir.exists()){
             Log.println(Log.ASSERT,"yes test","File exists");
@@ -107,23 +135,24 @@ public class LoadCreate extends AppCompatActivity {
 
             //Get all lists
             NodeList nList = document.getElementsByTagName("List");
-            Log.println(Log.ASSERT,"=","=========================");
 
-            for (int temp = 0; temp < nList.getLength(); temp++)
-            {
-                Node node = nList.item(temp);
-                Log.println(Log.ASSERT,"space","");    //Just a separator
-                if (node.getNodeType() == Node.ELEMENT_NODE)
-                {
-                    //Print each employee's detail
-                    Element eElement = (Element) node;
-                    Log.println(Log.ASSERT,"type","Type : "    + eElement.getAttribute("Type"));
-                    Log.println(Log.ASSERT,"word count","Word Count : "  + eElement.getElementsByTagName("WordCount").item(0).getTextContent());
-                    Log.println(Log.ASSERT,"TRounds","Training Rounds : "   + eElement.getElementsByTagName("TrainingRounds").item(0).getTextContent());
-                    Log.println(Log.ASSERT,"E Quota","Error Quota : "    + eElement.getElementsByTagName("ErrorQuota").item(0).getTextContent());
-                    Log.println(Log.ASSERT,"Percent Learned","Percent Learned : "    + eElement.getElementsByTagName("PercentLearned").item(0).getTextContent());
-                }
-            }
+//            Log.println(Log.ASSERT,"=","=========================");
+//
+//            for (int temp = 0; temp < nList.getLength(); temp++)
+//            {
+//                Node node = nList.item(temp);
+//                Log.println(Log.ASSERT,"space","");    //Just a separator
+//                if (node.getNodeType() == Node.ELEMENT_NODE)
+//                {
+//                    //Print each employee's detail
+//                    Element eElement = (Element) node;
+//                    Log.println(Log.ASSERT,"type","Type : "    + eElement.getAttribute("Type"));
+//                    Log.println(Log.ASSERT,"word count","Word Count : "  + eElement.getElementsByTagName("WordCount").item(0).getTextContent());
+//                    Log.println(Log.ASSERT,"TRounds","Training Rounds : "   + eElement.getElementsByTagName("TrainingRounds").item(0).getTextContent());
+//                    Log.println(Log.ASSERT,"E Quota","Error Quota : "    + eElement.getElementsByTagName("ErrorQuota").item(0).getTextContent());
+//                    Log.println(Log.ASSERT,"Percent Learned","Percent Learned : "    + eElement.getElementsByTagName("PercentLearned").item(0).getTextContent());
+//                }
+//            }
 
 
 

@@ -59,6 +59,71 @@ public class ParseActivity extends AppCompatActivity {
     }
 
     private void writeExampleXML() {
+        File exampleFile = new File(getFilesDir().getAbsolutePath()+"/ExampleList.xml");
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            //root element
+            Document doc = docBuilder.newDocument();
+            Element rootElement = doc.createElement("Collection");
+            doc.appendChild(rootElement);
+
+            //List element
+            Element listElement = doc.createElement("List");
+            rootElement.appendChild(listElement);
+
+            //set Attributes to listElement
+            Attr attr = doc.createAttribute("name");
+            attr.setValue("ExampleList");
+            listElement.setAttributeNode(attr);
+
+            //für jede Zeile
+            for(int i = 1; i<=10; i++) {
+
+                //vocabulary element
+                Element vocElement = doc.createElement("vocabulary");
+                listElement.appendChild(vocElement);
+
+                //native Word Element
+                Element natWord = doc.createElement("native");
+                natWord.appendChild(doc.createTextNode("Wort"+i));
+                vocElement.appendChild(natWord);
+
+                //foreign Word Element
+                Element forWord = doc.createElement("foreign");
+                forWord.appendChild(doc.createTextNode("mot"+i));
+                vocElement.appendChild(forWord);
+
+                //Priority Element
+                Element priorityElement = doc.createElement("priority");
+                priorityElement.appendChild(doc.createTextNode("0"));
+                vocElement.appendChild(priorityElement);
+
+                //learn status Element
+                Element learnStatus = doc.createElement("learningStat");
+                learnStatus.appendChild(doc.createTextNode("0"));
+                vocElement.appendChild(learnStatus);
+
+                //write the content into xml file
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+                DOMSource source = new DOMSource(doc);
+                StreamResult result = new StreamResult(exampleFile);
+
+                transformer.transform(source, result);
+            }
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void startTheNewActivity() {
