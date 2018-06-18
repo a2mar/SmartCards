@@ -151,7 +151,8 @@ public class PracticeActivity extends AppCompatActivity {
         swapCards(swapStep);
 
         Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-        getApplicationContext().startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
     }
 
     private void swapCards(int swapStep) {
@@ -187,8 +188,11 @@ public class PracticeActivity extends AppCompatActivity {
 
         } else {
             card4count.increaseCount();
+
             Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-            getApplicationContext().startActivity(intent);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+
         }
     }
 
