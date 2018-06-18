@@ -7,14 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
+
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.a2mar.smartcards.animations.FlipCard;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.function.ToDoubleBiFunction;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,9 +43,8 @@ public class PracticeActivity extends AppCompatActivity {
     private static String listName;
     private static int swapStep;
 
-
-    private View mCardFrontLayout;
-    private View mCardBackLayout;
+    private static View mCardFrontLayout;
+    private static View mCardBackLayout;
     private AnimatorSet mSetLeftOut;
     private AnimatorSet mSetRightIn;
     private AnimatorSet mSetRightOut;
@@ -76,6 +73,22 @@ public class PracticeActivity extends AppCompatActivity {
         mCardBackLayout = findViewById(R.id.card_back_frame);
         mCardFrontLayout = findViewById(R.id.card_front_frame);
 
+//        createRandIncline();
+//        loadAnimations();
+//        changeCameraDistance();
+//        makeBackCardInvisible();
+//
+//        adaptCards2ScreenSize();
+//        applyStringsToCard();
+//        setProgressBar();
+
+        //Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
         createRandIncline();
         loadAnimations();
         changeCameraDistance();
@@ -85,8 +98,9 @@ public class PracticeActivity extends AppCompatActivity {
         applyStringsToCard();
         setProgressBar();
 
-        Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
+
     }
+
 
     private void setProgressBar() {
         int progress = (int) (100/vocCardList.size()*(vocCardList.get(0).getCount()+1));
@@ -191,8 +205,9 @@ public class PracticeActivity extends AppCompatActivity {
 
             Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
 
+            overridePendingTransition(0,0);
+            startActivity(intent);
         }
     }
 
