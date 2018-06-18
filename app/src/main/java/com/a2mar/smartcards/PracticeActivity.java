@@ -71,8 +71,7 @@ public class PracticeActivity extends AppCompatActivity {
                 swapStep = vocCardList.size();
             }
 
-
-            Log.println(Log.INFO, "swapStep", String.valueOf(swapStep));
+//            Log.println(Log.INFO, "swapStep", String.valueOf(swapStep));
         }
         mCardBackLayout = findViewById(R.id.card_back_frame);
         mCardFrontLayout = findViewById(R.id.card_front_frame);
@@ -82,34 +81,11 @@ public class PracticeActivity extends AppCompatActivity {
         changeCameraDistance();
         makeBackCardInvisible();
 
-        //correctContinuePractice(); gehört zu einem neuen onClick
-        //wrongContinuePractice();  dito
         adaptCards2ScreenSize();
         applyStringsToCard();
         setProgressBar();
 
         Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
-
-//        printResultsToXML();
-//        adjustContentInLOCXML();
-
-        testVocCard();
-
-        //Create another intent that recalls same activity recursively
-//        Button nextBtn = (Button) findViewById(R.id.button1);
-//        nextBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public void onClick(View v) {
-//                VocCard card = vocCardList.get(0);
-//                card.increaseCount();
-//
-//                Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-//                //intent.putParcelableArrayListExtra("voc1",(ArrayList)vocCardList);
-//                getApplicationContext().startActivity(intent);
-//            }
-//        });
-
     }
 
     private void setProgressBar() {
@@ -124,35 +100,23 @@ public class PracticeActivity extends AppCompatActivity {
         metrics = getApplicationContext().getResources().getDisplayMetrics();
         FrameLayout frontCard = (FrameLayout) findViewById(R.id.card_front_frame);
         FrameLayout backCard = (FrameLayout) findViewById(R.id.card_back_frame);
-//        frontCard.setLayoutParams(new FrameLayout.LayoutParams(900, 615));
-//        backCard.setLayoutParams(new FrameLayout.LayoutParams(900, 615));
 
         float density = metrics.density;
-//        float density = metrics.scaledDensity;
-
-//        Log.println(Log.INFO, "density", String.valueOf(density));
 
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-//        Log.println(Log.INFO, "pxl width", String.valueOf(width));
-//        Log.println(Log.INFO, "pxl height", String.valueOf(height));
-
         FrameLayout.LayoutParams layoutParamsF = (FrameLayout.LayoutParams) frontCard.getLayoutParams();
-//        layoutParamsF.width = (int) (300*density);
-//        layoutParamsF.height = (int) (215*density);
+
         layoutParamsF.width = (int) (0.7*width);
         layoutParamsF.height = (int) (0.49*width);
 
         frontCard.setLayoutParams(layoutParamsF);
 
         FrameLayout.LayoutParams layoutParamsB = (FrameLayout.LayoutParams) backCard.getLayoutParams();
-//        layoutParamsB.width = (int) (300*density);
-//        layoutParamsB.height = (int) (215*density);
         layoutParamsB.width = (int) (0.7*width);
         layoutParamsB.height = (int) (0.49*width);
         backCard.setLayoutParams(layoutParamsB);
-
     }
 
     private void makeBackCardInvisible() {
@@ -182,7 +146,7 @@ public class PracticeActivity extends AppCompatActivity {
     }
 
     public void wrongContinuePractice(View view) {
-        //TODO: Switch VocCards within the ArrayList
+
         vocCardList.get(vocCardList.get(0).getCount()).increaseErrorLevel();
         swapCards(swapStep);
 
@@ -208,9 +172,6 @@ public class PracticeActivity extends AppCompatActivity {
         vocCardList.get(card4count.getCount()).decreaseErrorLevel();
 
         if (card4count.getCount() >= vocCardList.size() - 1) {
-            // TODO:
-            //Create new intent for EndPracticeActivity
-
 
             printResultsToXML();
             adjustContentInLOCXML();
@@ -223,10 +184,6 @@ public class PracticeActivity extends AppCompatActivity {
 
             Intent intent = new Intent(PracticeActivity.this, EndPracticeActivity.class);
             startActivity(intent);
-
-
-            //makeshift statement
-
 
         } else {
             card4count.increaseCount();
@@ -283,7 +240,7 @@ public class PracticeActivity extends AppCompatActivity {
 
                     Log.println(Log.INFO, "Error %", String.valueOf(iErrorPercent));
 
-
+                    /*LEFT THIS LOG-CODE HERE FOR FUTURE ERROR HANDLING*/
 
 //                    String sErrorName = eError.getNodeName();
 //                    String  sErrorText = nChildren.item(5).getTextContent();
@@ -344,7 +301,7 @@ public class PracticeActivity extends AppCompatActivity {
             Document doc = docBuilder.parse(currentVocList);
 
             NodeList allVocs = doc.getElementsByTagName("vocabulary");
-
+            /*LEFT THIS CODE HERE FOR FUTURE ERROR HANDLING*/
 //
 //
 //            NodeList subList = allVocs.item(0).getChildNodes();
@@ -441,9 +398,6 @@ public class PracticeActivity extends AppCompatActivity {
         String foreignVoc = card.getVocForeign();
         String nativeVoc = card.getVocNative();
 
-//        Log.println(Log.INFO, "foreign", foreignVoc);
-//        Log.println(Log.INFO, "native", nativeVoc);
-
         //Make a TextView display the transfered String
         TextView textViewFront = findViewById(R.id.word_foreign);
         textViewFront.setText(foreignVoc);
@@ -457,10 +411,6 @@ public class PracticeActivity extends AppCompatActivity {
 
         textViewBack.setTextSize(Textsize+1);
         textViewFront.setTextSize(Textsize+1);
-    }
-
-    private void testVocCard() {
-
     }
 
     public void flipCard(View view) {

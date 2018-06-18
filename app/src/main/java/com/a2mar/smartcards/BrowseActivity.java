@@ -1,13 +1,11 @@
 package com.a2mar.smartcards;
 
-import android.Manifest;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
+
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -85,26 +83,6 @@ public class BrowseActivity extends AppCompatActivity {
                 innerParentLayout.addView(newView, innerParentLayout.getChildCount());
             }
         }
-    }
-
-    public void getFileList(View view) {
-        File file_X = new File("/storage");
-
-        File[] fileList =  file_X.listFiles();
-        String allFiles = "";
-
-        for(File mFile:fileList){
-            allFiles = allFiles+mFile.getAbsolutePath()+"\n";
-        }
-
-        //int debug = fileList.length;
-
-        TextView tv2 = findViewById(R.id.path_list);
-        tv2.setText(allFiles);
-        String testString = (String) tv2.getText();
-        tv2.setText(testString+testString);
-        //tv2.setText(String.valueOf(debug));
-
     }
 
     public void goParentFile(View view) {

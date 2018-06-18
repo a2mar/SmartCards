@@ -21,9 +21,6 @@
         </activity>
         <activity android:name=".PracticeActivity" />
         <activity
-            android:name=".LoadActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
             android:name=".LoadCreate"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".CreateActivity" />

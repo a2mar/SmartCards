@@ -45,10 +45,6 @@ public class ParseActivity extends AppCompatActivity {
         }
 
         writeXML();
-
-        //addListToCollection(cutTitle);
-
-
         showComplete();
 
         Handler handler = new Handler();
@@ -57,9 +53,6 @@ public class ParseActivity extends AppCompatActivity {
                 startTheNewActivity();
             }
         }, 3000);   //3 seconds
-
-
-
     }
 
     private void addListToCollection(String listName, String sType, int wordCount) {
@@ -105,7 +98,6 @@ public class ParseActivity extends AppCompatActivity {
 
 
             //write the content into xml file
-            // write the content into xml file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
