@@ -166,6 +166,7 @@ public class PracticeActivity extends AppCompatActivity {
 
         Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        overridePendingTransition(50,0);
         startActivity(intent);
     }
 
@@ -206,7 +207,7 @@ public class PracticeActivity extends AppCompatActivity {
             Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
-            overridePendingTransition(0,0);
+            overridePendingTransition(50,0);
             startActivity(intent);
         }
     }
