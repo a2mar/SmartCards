@@ -28,6 +28,17 @@
 
     </FrameLayout>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="81dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+
+        android:progress="20" />
+
+
         <Button
             android:id="@+id/button2"
             android:layout_alignParentBottom="true"

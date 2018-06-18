@@ -38,6 +38,6 @@
         android:layout_marginTop="15dp"
         android:layout_alignParentRight="true"
         android:background="@android:drawable/ic_delete"
-        android:onClick="onDelete"/>
+        android:onClick="onDeleteList"/>
 
 </RelativeLayout>

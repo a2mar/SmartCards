@@ -5,20 +5,45 @@ import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.a2mar.smartcards.animations.FlipCard;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.function.ToDoubleBiFunction;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 public class PracticeActivity extends AppCompatActivity {
 
     private static ArrayList<VocCard> vocCardList = null;
-    private int count;
+    private static String listName;
+    private static int swapStep;
 
 
     private View mCardFrontLayout;
@@ -39,6 +64,15 @@ public class PracticeActivity extends AppCompatActivity {
         // Get the Intent that started this activity and extract the List
         if(vocCardList ==null) {
             vocCardList = getIntent().getParcelableArrayListExtra("VocList");
+            listName = getIntent().getStringExtra("listName");
+            swapStep = (int) getIntent().getIntExtra("swapStep",0);
+
+            if(swapStep <=0){
+                swapStep = vocCardList.size();
+            }
+
+
+            Log.println(Log.INFO, "swapStep", String.valueOf(swapStep));
         }
         mCardBackLayout = findViewById(R.id.card_back_frame);
         mCardFrontLayout = findViewById(R.id.card_front_frame);
@@ -50,21 +84,74 @@ public class PracticeActivity extends AppCompatActivity {
 
         //correctContinuePractice(); gehört zu einem neuen onClick
         //wrongContinuePractice();  dito
+        adaptCards2ScreenSize();
         applyStringsToCard();
+        setProgressBar();
+
+        Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
+
+//        printResultsToXML();
+//        adjustContentInLOCXML();
 
         testVocCard();
 
         //Create another intent that recalls same activity recursively
-        Button nextBtn = (Button) findViewById(R.id.button1);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onClick(View v) {
-                Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-                //intent.putParcelableArrayListExtra("voc1",(ArrayList)vocCardList);
-                getApplicationContext().startActivity(intent);
-            }
-        });
+//        Button nextBtn = (Button) findViewById(R.id.button1);
+//        nextBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            @SuppressWarnings("unchecked")
+//            public void onClick(View v) {
+//                VocCard card = vocCardList.get(0);
+//                card.increaseCount();
+//
+//                Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
+//                //intent.putParcelableArrayListExtra("voc1",(ArrayList)vocCardList);
+//                getApplicationContext().startActivity(intent);
+//            }
+//        });
+
+    }
+
+    private void setProgressBar() {
+        int progress = (int) (100/vocCardList.size()*(vocCardList.get(0).getCount()+1));
+        ProgressBar prBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        prBar.setProgress(progress);
+    }
+
+    private void adaptCards2ScreenSize() {
+        DisplayMetrics metrics;
+        metrics = getApplicationContext().getResources().getDisplayMetrics();
+        FrameLayout frontCard = (FrameLayout) findViewById(R.id.card_front_frame);
+        FrameLayout backCard = (FrameLayout) findViewById(R.id.card_back_frame);
+//        frontCard.setLayoutParams(new FrameLayout.LayoutParams(900, 615));
+//        backCard.setLayoutParams(new FrameLayout.LayoutParams(900, 615));
+
+        float density = metrics.density;
+//        float density = metrics.scaledDensity;
+
+//        Log.println(Log.INFO, "density", String.valueOf(density));
+
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+//        Log.println(Log.INFO, "pxl width", String.valueOf(width));
+//        Log.println(Log.INFO, "pxl height", String.valueOf(height));
+
+        FrameLayout.LayoutParams layoutParamsF = (FrameLayout.LayoutParams) frontCard.getLayoutParams();
+//        layoutParamsF.width = (int) (300*density);
+//        layoutParamsF.height = (int) (215*density);
+        layoutParamsF.width = (int) (0.7*width);
+        layoutParamsF.height = (int) (0.49*width);
+
+        frontCard.setLayoutParams(layoutParamsF);
+
+        FrameLayout.LayoutParams layoutParamsB = (FrameLayout.LayoutParams) backCard.getLayoutParams();
+//        layoutParamsB.width = (int) (300*density);
+//        layoutParamsB.height = (int) (215*density);
+        layoutParamsB.width = (int) (0.7*width);
+        layoutParamsB.height = (int) (0.49*width);
+        backCard.setLayoutParams(layoutParamsB);
 
     }
 
@@ -96,38 +183,280 @@ public class PracticeActivity extends AppCompatActivity {
 
     public void wrongContinuePractice(View view) {
         //TODO: Switch VocCards within the ArrayList
+        vocCardList.get(vocCardList.get(0).getCount()).increaseErrorLevel();
+        swapCards(swapStep);
 
         Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
         getApplicationContext().startActivity(intent);
+    }
+
+    private void swapCards(int swapStep) {
+        int count = vocCardList.get(0).getCount();
+
+        if((count+swapStep)>= vocCardList.size()){
+            vocCardList.add(vocCardList.get(count));
+            vocCardList.remove(count);
+        }
+        else {
+            vocCardList.add(count + swapStep, vocCardList.get(count));
+            vocCardList.remove(count);
+        }
     }
 
     public void correctContinuePractice(View view) {
         VocCard card4count = vocCardList.get(0);
-        count = card4count.getCount();
-        if(count >= vocCardList.size()){
+        vocCardList.get(card4count.getCount()).decreaseErrorLevel();
+
+        if (card4count.getCount() >= vocCardList.size() - 1) {
             // TODO:
             //Create new intent for EndPracticeActivity
 
-            //makeshift statement
-            count--;
 
-        }else{
+            printResultsToXML();
+            adjustContentInLOCXML();
+
+            //reset VocCard counter
+            card4count.resetCount();
+
+            //set vocCardList to null, because it is static
+            vocCardList = null;
+
+            Intent intent = new Intent(PracticeActivity.this, EndPracticeActivity.class);
+            startActivity(intent);
+
+
+            //makeshift statement
+
+
+        } else {
             card4count.increaseCount();
+            Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
+            getApplicationContext().startActivity(intent);
         }
-        Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-        getApplicationContext().startActivity(intent);
+    }
+
+    private void adjustContentInLOCXML() {
+        File fListColl = new File(getFilesDir().getAbsolutePath()+"/list_of_collections.xml");
+        String fListColl_path = getFilesDir().getAbsolutePath()+"/list_of_collections.xml";
+
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(fListColl);
+
+            NodeList nListList = doc.getElementsByTagName("List");
+
+            int counter = 0;
+            for(int i = 0; i+counter<nListList.getLength(); i++){
+
+                Element thisNode = (Element) nListList.item(i);
+                String name = thisNode.getAttribute("name");
+
+                if(name.equals(listName)) {
+
+                    counter = nListList.getLength(); //Stop after this loop
+
+                    NodeList nChildren = thisNode.getChildNodes();
+                    int nChSize = nChildren.getLength();
+                    Log.println(Log.INFO, "children size", String.valueOf(nChSize));
+
+                    Element eTrainingR = (Element) nChildren.item(5);
+//                    String sTrainingRName = eTrainingR.getTagName();
+                    String sTrainingRText = eTrainingR.getTextContent();
+                    int iNewTrainingR = Integer.parseInt(sTrainingRText)+1;
+
+                    eTrainingR.setTextContent(String.valueOf(iNewTrainingR));
+//                    Log.println(Log.INFO, "Training Tag", sTrainingRName);
+//                    Log.println(Log.INFO, "Training Text", sTrainingRText);
+
+                    Element eError = (Element) nChildren.item(7);
+
+                    int iErrors = 0;
+
+                    for(int j = 0; j<vocCardList.size(); j++  ){
+                        if(vocCardList.get(j).getErrorLevel()>0){
+                            iErrors++;
+                        }
+                    }
+
+                    int iErrorPercent = (int) (100/vocCardList.size()*iErrors);
+
+                    Log.println(Log.INFO, "Error %", String.valueOf(iErrorPercent));
+
+
+
+//                    String sErrorName = eError.getNodeName();
+//                    String  sErrorText = nChildren.item(5).getTextContent();
+//
+//                    Log.println(Log.INFO, "ErrorTag", "Tag name is: " + sErrorName);
+//                    Log.println(Log.INFO, "ErrorQu", "text is: " + sErrorText);
+
+                    Element eLearned = (Element) nChildren.item(9);
+                    eError.setTextContent(String.valueOf(iErrorPercent));
+                    eLearned.setTextContent(String.valueOf(100-iErrorPercent));
+
+//                    String sLearnedName = eLearned.getNodeName();
+//                    String  sLearnedText = eLearned.getTextContent();
+//
+//                    Log.println(Log.INFO, "LearnedTag", "Tag name is: " + sLearnedName);
+//                    Log.println(Log.INFO, "Learned", "text is: " + sLearnedText);
+//
+
+                    //Log.println(Log.INFO, "attr name", "name is: " + name);
+                }
+
+            }
+
+            // write the content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File(fListColl_path));
+
+            transformer.transform(source, result);
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void printResultsToXML() {
+
+        File currentVocList = new File(getFilesDir().getAbsolutePath()+"/"+listName+".xml");
+        String currentVocList_path = getFilesDir().getAbsolutePath()+"/"+listName+".xml";
+
+        try {
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(currentVocList);
+
+            NodeList allVocs = doc.getElementsByTagName("vocabulary");
+
+//
+//
+//            NodeList subList = allVocs.item(0).getChildNodes();
+//
+//            int subSize = subList.getLength();
+//
+//            Log.println(Log.INFO, "sublist size", String.valueOf(subSize));
+//
+//            Node E1 = subList.item(0);
+//            String sE1 = E1.getTextContent();
+//
+//            Node E2 =  subList.item(1);
+//            String sE2 = E2.getNodeName();
+//
+//            Node E3 =  subList.item(2);
+//            String sE3 = E3.getTextContent();
+//
+//            Node E4 =  subList.item(3);
+//            String sE4 = E4.getNodeName();
+//            String sE4_1 = E4.getTextContent();
+//
+//
+//            Node E5 =  subList.item(4);
+//            String sE5 = E5.getTextContent();
+//
+//            Node E6 =  subList.item(5);
+//            String sE6 = E6.getNodeName();
+//
+//            Node E7 =  subList.item(6);
+//            String sE7 = E7.getTextContent();
+//
+//            Node E8 = subList.item(7);
+//            String sE8 = E8.getNodeName();
+//
+//            Node E9 =  subList.item(8);
+//            String sE9 = E9.getTextContent();
+//
+//            Log.println(Log.INFO, "e1", sE1);
+//            Log.println(Log.INFO, "e2", sE2);
+//            Log.println(Log.INFO, "e3", sE3);
+//            Log.println(Log.INFO, "e4", sE4);
+//            Log.println(Log.INFO, "e4.1", sE4_1);
+//            Log.println(Log.INFO, "e5", sE5);
+//            Log.println(Log.INFO, "e6", sE6);   //index 5 = priority
+//            Log.println(Log.INFO, "e7", sE7);
+//            Log.println(Log.INFO, "e8", sE8);
+//            Log.println(Log.INFO, "e9", sE9);
+
+
+            for(int i = 0; i<vocCardList.size(); i++){
+                int counter = 0;
+                for(int j = 0; j+counter<allVocs.getLength(); j++){
+
+                    NodeList childList = allVocs.item(j).getChildNodes();
+
+                    if(vocCardList.get(i).getVocForeign().equals(childList.item(3).getTextContent())){
+                        //int oldScore = Integer.parseInt(childList.item(5).getTextContent());
+                        childList.item(5).setTextContent(String.valueOf(vocCardList.get(i).getErrorLevel()));
+                        counter = allVocs.getLength();
+                    }
+                }
+            }
+
+
+            // write the content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File(currentVocList_path));
+
+            transformer.transform(source, result);
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void applyStringsToCard() {
-        VocCard card = vocCardList.get(count);
+        VocCard zeroCard = vocCardList.get(0);
+
+        VocCard card = vocCardList.get(zeroCard.getCount());
         String foreignVoc = card.getVocForeign();
         String nativeVoc = card.getVocNative();
+
+//        Log.println(Log.INFO, "foreign", foreignVoc);
+//        Log.println(Log.INFO, "native", nativeVoc);
 
         //Make a TextView display the transfered String
         TextView textViewFront = findViewById(R.id.word_foreign);
         textViewFront.setText(foreignVoc);
         TextView textViewBack = findViewById(R.id.word_native);
         textViewBack.setText(nativeVoc);
+
+        //Adapt text size to display
+        DisplayMetrics metrics;
+        metrics = getApplicationContext().getResources().getDisplayMetrics();
+        float Textsize = textViewBack.getTextSize()/metrics.density;
+
+        textViewBack.setTextSize(Textsize+1);
+        textViewFront.setTextSize(Textsize+1);
     }
 
     private void testVocCard() {

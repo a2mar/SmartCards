@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,6 +46,8 @@ public class ParseActivity extends AppCompatActivity {
 
         writeXML();
 
+        //addListToCollection(cutTitle);
+
 
         showComplete();
 
@@ -55,6 +59,73 @@ public class ParseActivity extends AppCompatActivity {
         }, 3000);   //3 seconds
 
 
+
+    }
+
+    private void addListToCollection(String listName, String sType, int wordCount) {
+        File fListColl = new File(getFilesDir().getAbsolutePath()+"/list_of_collections.xml");
+        String fListColl_path = getFilesDir().getAbsolutePath()+"/list_of_collections.xml";
+
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(fListColl);
+
+            //get root element, node "ListOfCollections"
+            Node listOColl = doc.getFirstChild();
+
+            //Test append new Node
+            Element newList = doc.createElement("List");
+            listOColl.appendChild(newList);
+
+            Attr attr = doc.createAttribute("name");
+            attr.setValue(listName);
+            newList.setAttributeNode(attr);
+
+            //add the Tag Elements
+            Element eType = doc.createElement("Type");
+            eType.appendChild(doc.createTextNode(sType));
+            newList.appendChild(eType);
+
+            Element eWordCount = doc.createElement("WordCount");
+            eWordCount.appendChild(doc.createTextNode(String.valueOf(wordCount)));
+            newList.appendChild(eWordCount);
+
+            Element eTraining = doc.createElement("TrainingRounds");
+            eTraining.appendChild(doc.createTextNode("0"));
+            newList.appendChild(eTraining);
+
+            Element eError = doc.createElement("ErrorQuota");
+            eError.appendChild(doc.createTextNode("0"));
+            newList.appendChild(eError);
+
+            Element eLearned = doc.createElement("PercentLearned");
+            eLearned.appendChild(doc.createTextNode("0"));
+            newList.appendChild(eLearned);
+
+
+            //write the content into xml file
+            // write the content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File(fListColl_path));
+
+            transformer.transform(source, result);
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -142,12 +213,19 @@ public class ParseActivity extends AppCompatActivity {
         try {
             File userText = new File(passedPath);
 
+            int wordCount = 0;
+
             Scanner scn = new Scanner(new FileInputStream(userText), "UTF-8");
 
             String separate = ";";
-            String fileTitle = scn.nextLine();
-            int indSepTitle = fileTitle.indexOf(separate);
-            fileTitle = fileTitle.substring(0,indSepTitle);
+
+            String sFile = scn.nextLine();
+
+            int indSepTitle = sFile.indexOf(separate);
+            String fileTitle = sFile.substring(0,indSepTitle);
+
+            int indTypeTile = sFile.lastIndexOf(separate);
+            String sType = sFile.substring(indSepTitle+1, indTypeTile);
 
             char[] titleChars = fileTitle.toCharArray();
             int chLength = titleChars.length;
@@ -215,6 +293,8 @@ public class ParseActivity extends AppCompatActivity {
                 Element learnStatus = doc.createElement("learningStat");
                 learnStatus.appendChild(doc.createTextNode("0"));
                 vocElement.appendChild(learnStatus);
+
+                wordCount++;
             }
 
             //write the content into xml file
@@ -226,6 +306,8 @@ public class ParseActivity extends AppCompatActivity {
             StreamResult result = new StreamResult(mOutFile);
 
             transformer.transform(source, result);
+
+            addListToCollection(cutTitle, sType, wordCount);
 
 
         } catch (ParserConfigurationException e) {

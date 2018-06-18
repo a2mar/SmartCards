@@ -41,8 +41,21 @@ public class VocCard implements Parcelable{
         learned = true;
     }
 
+    public void setErrorLevel(int error_level){
+        this.error_level = error_level;
+    }
+
     public void increaseErrorLevel(){
-        error_level++;
+        error_level = error_level+2;
+    }
+
+    public void decreaseErrorLevel(){
+        if(error_level>0){
+            error_level = error_level-1;
+        }
+        else{
+            error_level = 0;
+        }
     }
 
     public int getCount(){
@@ -52,6 +65,8 @@ public class VocCard implements Parcelable{
     public void increaseCount(){
         counter++;
     }
+
+    public void resetCount(){counter = 0;}
 
     public static final Creator<VocCard> CREATOR = new Creator<VocCard>() {
         @Override
@@ -94,7 +109,7 @@ public class VocCard implements Parcelable{
     /**
      * A constructor that initializes the VocCard object.
      **/
-    VocCard(String voc_foreign, String voc_native) {
+    VocCard(String voc_native, String voc_foreign) {
         this.voc_foreign = voc_foreign;
         this.voc_native = voc_native;
     }

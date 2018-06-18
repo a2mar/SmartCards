@@ -16,7 +16,7 @@
         android:id="@+id/word_native"
         android:text="Front"
         android:textStyle="bold"
-        android:textSize="72sp"
+        android:textSize="42sp"
         android:textColor="#fff"
         style="@style/Base.TextAppearance.AppCompat.Display1"
         android:gravity="center"/>

@@ -31,6 +31,7 @@ public class BrowseActivity extends AppCompatActivity {
     private String firstPath;
     private static int slashes;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

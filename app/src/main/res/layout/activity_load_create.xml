@@ -63,4 +63,18 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="10dp"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set swap"
+        android:id="@+id/set_swap"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:onClick="startCreation"
+        android:layout_toLeftOf="@+id/fast_create"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="50dp"
+        />
 </RelativeLayout>
