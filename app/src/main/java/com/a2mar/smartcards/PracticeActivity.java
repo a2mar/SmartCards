@@ -73,22 +73,6 @@ public class PracticeActivity extends AppCompatActivity {
         mCardBackLayout = findViewById(R.id.card_back_frame);
         mCardFrontLayout = findViewById(R.id.card_front_frame);
 
-//        createRandIncline();
-//        loadAnimations();
-//        changeCameraDistance();
-//        makeBackCardInvisible();
-//
-//        adaptCards2ScreenSize();
-//        applyStringsToCard();
-//        setProgressBar();
-
-        //Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-
         createRandIncline();
         loadAnimations();
         changeCameraDistance();
@@ -98,9 +82,30 @@ public class PracticeActivity extends AppCompatActivity {
         applyStringsToCard();
         setProgressBar();
 
-
+        //Log.println(Log.INFO, "current count", String.valueOf(vocCardList.get(0).getCount()));
     }
 
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//
+//        createRandIncline();
+//        loadAnimations();
+//        changeCameraDistance();
+//        makeBackCardInvisible();
+//
+//        adaptCards2ScreenSize();
+//        applyStringsToCard();
+//        setProgressBar();
+//    }
+
+    private void update(){
+        createRandIncline();
+        makeBackCardInvisible();
+        adaptCards2ScreenSize();
+        applyStringsToCard();
+        setProgressBar();
+    }
 
     private void setProgressBar() {
         int progress = (int) (100/vocCardList.size()*(vocCardList.get(0).getCount()+1));
@@ -164,10 +169,20 @@ public class PracticeActivity extends AppCompatActivity {
         vocCardList.get(vocCardList.get(0).getCount()).increaseErrorLevel();
         swapCards(swapStep);
 
-        Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        overridePendingTransition(50,0);
-        startActivity(intent);
+        if(isBackRevealed){
+            mSetRightOut.setTarget(mCardBackLayout);
+            mSetLeftIn.setTarget(mCardFrontLayout);
+            mSetRightOut.start();
+            mSetLeftIn.start();
+            isBackRevealed = false;
+        }
+
+        update();
+
+//        Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//        overridePendingTransition(0,0);
+//        startActivity(intent);
     }
 
     private void swapCards(int swapStep) {
@@ -204,11 +219,20 @@ public class PracticeActivity extends AppCompatActivity {
         } else {
             card4count.increaseCount();
 
-            Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            if(isBackRevealed){
+                mSetRightOut.setTarget(mCardBackLayout);
+                mSetLeftIn.setTarget(mCardFrontLayout);
+                mSetRightOut.start();
+                mSetLeftIn.start();
+                isBackRevealed = false;
+            }
 
-            overridePendingTransition(50,0);
-            startActivity(intent);
+            update();
+
+//            Intent intent = new Intent(PracticeActivity.this, PracticeActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            overridePendingTransition(50,0);
+//            startActivity(intent);
         }
     }
 
@@ -425,12 +449,158 @@ public class PracticeActivity extends AppCompatActivity {
         textViewBack.setText(nativeVoc);
 
         //Adapt text size to display
+
+        int optimumNat = getBestSize(nativeVoc);
+        int optimumFor = getBestSize(foreignVoc);
+
         DisplayMetrics metrics;
         metrics = getApplicationContext().getResources().getDisplayMetrics();
-        float Textsize = textViewBack.getTextSize()/metrics.density;
+        float fTextsizeN = optimumNat/metrics.density;
+        float fTextsizeF = optimumFor/metrics.density;
 
-        textViewBack.setTextSize(Textsize+1);
-        textViewFront.setTextSize(Textsize+1);
+
+        textViewBack.setTextSize(fTextsizeN+1);
+        textViewFront.setTextSize(fTextsizeF+1);
+    }
+
+    private int getBestSize(String voc) {
+        if(voc.length()<=7){
+            return 120;
+        }
+        if(voc.length()>7 && voc.length()<=10){
+            if(!voc.contains(" ")){
+                return 80;
+            }
+            else{
+                if(voc.indexOf(" ")>=2 || voc.lastIndexOf(" ")<=5){
+                    return 120;
+                }
+            }
+        }
+        if(voc.length() > 10 && voc.length()<= 14){
+            if(!voc.contains(" ")) {
+                return 60;
+            }
+            else{
+                int counter = 0;
+                String tSubject = voc;
+                int index = 0;
+                while(tSubject.contains(" ")){
+                        index = tSubject.indexOf(" ");
+                        tSubject = tSubject.substring(index+1);
+                        counter++;
+                }
+                if(counter==1){
+                    if(voc.lastIndexOf(" ")<=6 || voc.indexOf(" ")>=2 ){
+                        return 80;
+                    }
+                }
+                if(counter >=2){
+                    return 100;
+                }
+            }
+        }
+        if(voc.length() > 14 && voc.length()<=19){
+            if(!voc.contains(" ")) {
+                return 40;
+            }
+            else{
+                int counter = 1;
+                String tSubject = voc;
+                int index = 0;
+                while(tSubject.contains(" ")){
+                    index = tSubject.indexOf(" ");
+                    tSubject = tSubject.substring(index+1);
+                    counter++;
+                }
+                if(counter == 1){
+                    if(voc.indexOf(" ")>=2 || voc.lastIndexOf(" ")<=10){
+                        return 60;
+                    }
+                }
+                if(counter == 2){
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=8){
+                        return 80;
+                    }
+                }
+                if(counter >= 3){
+
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=8){
+                        return 100;
+                    }
+                    else{
+                        return 80;
+                    }
+                }
+            }
+        }
+        if(voc.length()>19 && voc.length()<=24){
+            if(!voc.contains(" ")) {
+                return 30;
+            }
+            else{   // evtl. replace with String.split
+                int counter = 1;
+                String tSubject = voc;
+                int index = 0;
+                while(tSubject.contains(" ")){
+                    index = tSubject.indexOf(" ");
+                    tSubject = tSubject.substring(index+1);
+                    counter++;
+                }
+                if(counter == 1){
+                    if(voc.indexOf(" ")>=2 || voc.lastIndexOf(" ")<=15){
+                        return 40;
+                    }
+                }
+                if(counter == 2){
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=12){
+                        return 60;
+                    }
+                }
+                if(counter >= 3){
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=12){
+                        return 80;
+                    }
+                    else{
+                        return 60;
+                    }
+                }
+            }
+        }
+        if(voc.length() >24){
+            if(!voc.contains(" ")) {
+                return 20;
+            }
+            else{
+                int counter = 1;
+                String tSubject = voc;
+                int index = 0;
+                while(tSubject.contains(" ")){
+                    index = tSubject.indexOf(" ");
+                    tSubject = tSubject.substring(index+1);
+                    counter++;
+                }
+                if(counter == 1){
+                    if(voc.indexOf(" ")>=2 || voc.lastIndexOf(" ")<=20){
+                        return 30;
+                    }
+                }
+                if(counter == 2){
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=17){
+                        return 40;
+                    }
+                }
+                if(counter >= 3){
+                    if(Math.abs(voc.indexOf(" ")-voc.lastIndexOf(" "))<=17){
+                        return 60;
+                    }
+                    else{
+                        return 40;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     public void flipCard(View view) {

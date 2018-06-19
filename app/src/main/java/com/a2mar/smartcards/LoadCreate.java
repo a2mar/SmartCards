@@ -236,8 +236,8 @@ public class LoadCreate extends AppCompatActivity {
     }
 
     private void copyResFile(File mPathTry) {
-        Toast mToast = new Toast(this);
-        mToast.makeText(this, "list of collection not yet here", Toast.LENGTH_LONG).show();
+//        Toast mToast = new Toast(this);
+//        mToast.makeText(this, "list of collection not yet here", Toast.LENGTH_LONG).show();
 
         InputStream templateFile = getResources().openRawResource(R.raw.list_of_collections);
 

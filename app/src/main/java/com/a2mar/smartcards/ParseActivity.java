@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.w3c.dom.Attr;
@@ -39,10 +40,10 @@ public class ParseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parse);
         Intent intent = getIntent();
         passedPath = intent.getStringExtra("path");
-
-        if(!new File(getFilesDir().getAbsolutePath()+"/ExampleList.xml").exists()){
-            writeExampleXML();
-        }
+        /*left that code here for future testings*/
+//        if(!new File(getFilesDir().getAbsolutePath()+"/ExampleList.xml").exists()){
+//            writeExampleXML();
+//        }
 
         writeXML();
         showComplete();
@@ -223,15 +224,20 @@ public class ParseActivity extends AppCompatActivity {
             int chLength = titleChars.length;
 
             String cutTitle = "";
-            for(int i=1; i<chLength;i++){
-                cutTitle = cutTitle+titleChars[i];
+            if(fileTitle.codePointAt(0)==65279) {
+                for (int i = 1; i < chLength; i++) {
+                    cutTitle = cutTitle + titleChars[i];
+                }
+            }
+            else{
+                cutTitle = fileTitle;
             }
 
 
 
-//            Log.println(Log.ASSERT, "ft","codepoint at 0: "+fileTitle.codePointAt(0));
-//            Log.println(Log.ASSERT, "ft","codepoint at 1: "+fileTitle.codePointAt(1));
-//            Log.println(Log.ASSERT, "ft","codepoint at 2: "+fileTitle.codePointAt(2));
+            Log.println(Log.ASSERT, "ft","codepoint at 0: "+fileTitle.codePointAt(0)); //65279
+            Log.println(Log.ASSERT, "ft","codepoint at 1: "+fileTitle.codePointAt(1));
+            Log.println(Log.ASSERT, "ft","codepoint at 2: "+fileTitle.codePointAt(2));
 //
 //            Log.println(Log.ASSERT, "ct","codepoint at 0: "+cutTitle.codePointAt(0));
 //            Log.println(Log.ASSERT, "ct","codepoint at 1: "+cutTitle.codePointAt(1));
